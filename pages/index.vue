@@ -1,68 +1,40 @@
 <template>
-  <section class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        qiita-nuxt
-      </h1>
-      <h2 class="subtitle">
-        My delightful Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >GitHub</a>
-      </div>
+  <section>
+    <h1>Qiita 新着記事一覧</h1>
+    <div
+      v-for="(article, index) in articleList"
+      :key="index"
+    >
+    <ul class="list-group">
+      <li class="list-group-item">
+        <a :href="article.url">{{ article.title }}</a>
+      </li>
+    </ul>
     </div>
   </section>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+// axios
+import axios from 'axios';
+// qiita api URL
+const BASE_URL = 'https://qiita.com/api/v2/';
 
 export default {
-  components: {
-    Logo
+  async asyncData(context) {
+    try {
+      const response = await axios.get(BASE_URL + 'items', {
+        params: {
+          page: 1,
+          per_page: 10,
+        }
+      });
+      return {
+        articleList: response.data,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
